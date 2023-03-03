@@ -1,0 +1,36 @@
+name: Update tokens
+
+on:
+  workflow_dispatch:
+    types: update-tokens
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Input JSON
+        id: input
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: ${{githu.event.client_payload.filename}}
+          json: ${{githu.event.client_payload.tokens}}
+          dir: 'input'
+
+      - name: install
+        run: npm ci
+
+      - name: build
+        run: npm run build
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: master
+          title: "Tokens sync Figma"
+          commit-message: "Updating figma tokens"
