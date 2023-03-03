@@ -1,7 +1,7 @@
-name: Update tokens
+name: Generate design tokens
 
 on:
-  workflow_dispatch:
+  repository_dispatch:
     types: update-tokens
 
 jobs:
@@ -10,30 +10,31 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Input JSON
-        id: input
+      - name: Create input JSON
+        id: create-json
         uses: jsdaniell/create-json@1.1.2
         with:
-          name: ${{githu.event.client_payload.filename}}
-          json: ${{githu.event.client_payload.tokens}}
+          name: ${{ github.event.client_payload.filename }}
+          json: ${{ github.event.client_payload.tokens }}
           dir: 'input'
 
-      - name: Node setup
+      - name: Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 16
 
-      - name: install
+      - name: Install dependencies
         run: npm ci
-
-      - name: build
+      
+      - name: Build
         run: npm run build
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+      - name: Create PR 
+        uses: peter-evans/create-pull-request@v4
         with:
-          title: "Tokens sync Figma"
-          commit-message: "Updating figma tokens"
+          commit-message: "style: Update design tokens"
+          title: ${{ github.event.client_payload.commitMessage || 'Update design tokens' }}
+          body: "Design tokens have been updated via Figma and need to be reviewed."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH_NAME: ['master', 'main']
+          BRANCH_NAME: 'main'
