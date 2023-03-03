@@ -18,7 +18,7 @@ jobs:
           json: ${{githu.event.client_payload.tokens}}
           dir: 'input'
 
-      - name: Node install
+      - name: Node setup
         uses: actions/setup-node@v3
         with:
           node-version: 16
@@ -30,9 +30,10 @@ jobs:
         run: npm run build
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          branch: 'master'
           title: "Tokens sync Figma"
           commit-message: "Updating figma tokens"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH_NAME: 'master'
