@@ -2,15 +2,13 @@ name: Update tokens
 
 on:
   workflow_dispatch:
+    types: update-tokens
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
 
       - name: Input JSON
         id: input
@@ -19,6 +17,11 @@ jobs:
           name: ${{githu.event.client_payload.filename}}
           json: ${{githu.event.client_payload.tokens}}
           dir: 'input'
+
+      - name: Node setup
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
 
       - name: install
         run: npm ci
