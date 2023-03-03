@@ -2,7 +2,6 @@ name: Update tokens
 
 on:
   workflow_dispatch:
-    types: update-tokens
 
 jobs:
   build:
